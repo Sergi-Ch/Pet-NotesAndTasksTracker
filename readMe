@@ -1,0 +1,34 @@
+.
+├── cmd/                  # Точки входа (main.go)
+│   └── server/           # Для REST API
+│       └── main.go       # Инициализация приложения
+│   └── cli/              # Для CLI (если будет)
+│       └── main.go
+├── internal/             # Основная бизнес-логика
+│   ├── domain/           # Сущности (модели)
+│   │   ├── note.go       # type Note struct {...}
+│   │   └── task.go
+│   ├── repository/       # Работа с данными (БД)
+│   │   ├── note_repo.go  # методы типа GetByID, Create
+│   │   └── task_repo.go
+│   ├── service/          # Бизнес-логика
+│   │   ├── note_service.go # type NoteService struct { repo NoteRepository }
+│   │   └── task_service.go
+│   ├── handler/          # HTTP-обработчики
+│   │   ├── note_handler.go
+│   │   └── task_handler.go
+│   ├── pkg/              # Вспомогательные модули
+│   │   ├── auth/         # JWT-логика
+│   │   ├── logger/       # Настройка zerolog
+│   │   └── storage/      # Работа с файлами
+├── migrations/           # SQL-миграции (например, goose)
+│   └── 0001_init.sql
+├── configs/              # Конфиги (env, yaml)
+│   └── app.env
+├── api/                  # OpenAPI/Swagger спецификации
+├── scripts/              # Вспомогательные скрипты
+├── Dockerfile
+├── docker-compose.yml
+└── go.mod
+
+HTTP → Handler → Service → Repository → DB.
