@@ -32,3 +32,12 @@
 └── go.mod
 
 HTTP → Handler → Service → Repository → DB.
+
+HTTP-запрос (POST /notes)
+  → NoteHandler
+    → NoteService (проверяет title)
+      → NoteRepoPG (INSERT INTO notes...)
+        → PostgreSQL (сохраняет строку)
+      ← NoteRepoPG (возвращает ID)
+    ← NoteService (возвращает Note)
+  ← NoteHandler (отправляет JSON)
