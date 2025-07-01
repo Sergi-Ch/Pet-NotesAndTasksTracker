@@ -1,6 +1,15 @@
 package domain
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrNoteNotFound = errors.New("note not found")
+	ErrInvalidTitle = errors.New("title must be at least 3 characters")
+	ErrAccessDenied = errors.New("access denied") // Доступ запрещен
+)
 
 type Note struct {
 	ID        int       `json:"id"`

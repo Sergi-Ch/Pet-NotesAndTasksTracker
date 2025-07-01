@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type noteRepository interface { //Нужно, чтобы потом дергать в main и дать возможность
+type NoteRepository interface { //Нужно, чтобы потом дергать в main и дать возможность
 	Create(ctx context.Context, note *domain.Note) error // Переписать методы под другую базу данных, но с таким же названием.
 	GetById(ctx context.Context, id int) (*domain.Note, error)
 	GetAll(ctx context.Context, authorID int) ([]*domain.Note, error)
@@ -29,7 +29,7 @@ func (r *NoteRepoPG) Create(ctx context.Context, note *domain.Note) error {
 	query := `INSERT INTO notes (title, content, authorID) 
           VALUES ($1, $2, $3) 
           RETURNING id, createdAT, updatedAt` // обратная кавычка это для многострочных строк
-	err := r.db.QueryRow(context.Background(), query, note.Title, note.Content, note.AuthorID).Scan(
+	err := r.db.QueryRow(context.Background(), query, note.Title, note.Content, note.AuthorID).Scan( //почему мы не передаем время, мы ведь его в сервисе задаем.
 		&note.ID,
 		&note.CreatedAt,
 		&note.UpdatedAt)
