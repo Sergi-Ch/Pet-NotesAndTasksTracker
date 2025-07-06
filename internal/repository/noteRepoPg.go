@@ -42,11 +42,11 @@ func (r *NoteRepoPG) Create(ctx context.Context, note *domain.Note) error {
 	// return просто экономит время, мы могли вызвать select чтобы получить данные только что созданной заметки.
 }
 
-func (r *NoteRepoPG) GetByID(ctx context.Context, id int) (**domain.Note, error) {
+func (r *NoteRepoPG) GetById(ctx context.Context, id int) (*domain.Note, error) {
 	query := `SELECT id, title, content, authorID, createdAt, updatedAt
 		FROM notes
 		WHERE id = $1`
-	var note *domain.Note
+	note := domain.Note{}
 	err := r.db.QueryRow(ctx, query, id).Scan(
 		&note.ID,
 		&note.Title,

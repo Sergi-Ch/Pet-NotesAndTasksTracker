@@ -20,6 +20,10 @@ func NewNoteHandler(s *service.NoteServ) *NoteHandler {
 func (h *NoteHandler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	var note domain.Note
 	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+	}
+
+	if err := h.service.CreateNote(r.Context(), &note); err != nil {
 		switch err {
 		case domain.ErrInvalidTitle:
 			http.Error(w, "Title too short", http.StatusBadRequest)
@@ -35,6 +39,7 @@ func (h *NoteHandler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Error of encoding", http.StatusInternalServerError)
 	}
+
 }
 
 func (h *NoteHandler) GetNote(w http.ResponseWriter, r *http.Request) {
