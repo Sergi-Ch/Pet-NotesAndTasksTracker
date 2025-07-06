@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-type NoteService struct {
+type NoteServ struct {
 	repo repository.NoteRepository
 }
 
-func NewNoteService(repo repository.NoteRepository) *NoteService {
-	return &NoteService{repo: repo}
+func NewNoteService(repo repository.NoteRepository) *NoteServ {
+	return &NoteServ{repo: repo}
 }
 
-func (s *NoteService) CreateNote(ctx context.Context, note *domain.Note) error {
+func (s *NoteServ) CreateNote(ctx context.Context, note *domain.Note) error {
 	if len(note.Title) < 3 {
 		return domain.ErrInvalidTitle
 	}
@@ -26,18 +26,18 @@ func (s *NoteService) CreateNote(ctx context.Context, note *domain.Note) error {
 	return s.repo.Create(ctx, note)
 }
 
-func (s *NoteService) GetNoteById(ctx context.Context, id int) (*domain.Note, error) {
+func (s *NoteServ) GetNoteById(ctx context.Context, id int) (*domain.Note, error) {
 	return s.repo.GetById(ctx, id)
 }
 
-func (s *NoteService) GetAll(ctx context.Context, authorId int) ([]*domain.Note, error) {
-	return s.repo.GetAll(ctx, authorId)
+func (s *NoteServ) GetAll(ctx context.Context) ([]*domain.Note, error) {
+	return s.repo.GetAll(ctx)
 }
 
-func (s *NoteService) Update(ctx context.Context, note *domain.Note) error {
+func (s *NoteServ) Update(ctx context.Context, note *domain.Note) error {
 	return s.repo.Update(ctx, note)
 }
 
-func (s *NoteService) Delete(ctx context.Context, id int, authorID int) error {
-	return s.repo.Delete(ctx, id, authorID)
+func (s *NoteServ) Delete(ctx context.Context, id int) error {
+	return s.repo.Delete(ctx, id)
 }

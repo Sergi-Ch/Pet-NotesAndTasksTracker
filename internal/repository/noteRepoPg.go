@@ -5,22 +5,23 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
 
 type NoteRepository interface { //Нужно, чтобы потом дергать в main и дать возможность
 	Create(ctx context.Context, note *domain.Note) error // Переписать методы под другую базу данных, но с таким же названием.
 	GetById(ctx context.Context, id int) (*domain.Note, error)
-	GetAll(ctx context.Context, authorID int) ([]*domain.Note, error)
+	GetAll(ctx context.Context) ([]*domain.Note, error)
 	Update(ctx context.Context, note *domain.Note) error
-	Delete(ctx context.Context, id int, authorID int) error
+	Delete(ctx context.Context, id int) error
 }
 
 type NoteRepoPG struct { // Структура, заметки с полем типа подключения (в main мы подрубаемся и этот тип позволяет
-	db *pgx.Conn // Работать с подключением. Либо conn либо пул соединений pgx.pool
+	db *pgxpool.Pool // Работать с подключением. Либо conn либо пул соединений pgx.pool
 }
 
-func NewNotePG(db *pgx.Conn) *NoteRepoPG {
+func NewNotePG(db *pgxpool.Pool) *NoteRepoPG {
 	return &NoteRepoPG{db: db}
 }
 
@@ -59,12 +60,11 @@ func (r *NoteRepoPG) GetByID(ctx context.Context, id int) (**domain.Note, error)
 	return &note, err
 }
 
-func (r *NoteRepoPG) GetAll(ctx context.Context, authorID int) ([]*domain.Note, error) {
+func (r *NoteRepoPG) GetAll(ctx context.Context) ([]*domain.Note, error) {
 	query := `SELECT id, title, content, authorID, createdAt, updatedAt FROM notes
-        WHERE authorID = $1
 		ORDER BY createdAt DESC `
 
-	rows, err := r.db.Query(ctx, query, authorID)
+	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -108,10 +108,10 @@ func (r *NoteRepoPG) Update(ctx context.Context, note *domain.Note) error {
 	return nil
 }
 
-func (r *NoteRepoPG) Delete(ctx context.Context, id int, authorID int) error {
+func (r *NoteRepoPG) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM notes
-WHERE id = $1 and authorID = $2`
-	result, err := r.db.Exec(ctx, query, id, authorID) //что такое Exec?
+WHERE id = $1`
+	result, err := r.db.Exec(ctx, query, id) //что такое Exec?
 	if err != nil {
 		return fmt.Errorf("error of delete %w", err)
 	}
