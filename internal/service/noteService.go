@@ -11,6 +11,8 @@ type NoteServ struct {
 	repo repository.NoteRepository
 }
 
+//сделать интерфейс service
+
 func NewNoteService(repo repository.NoteRepository) *NoteServ {
 	return &NoteServ{repo: repo}
 }
@@ -28,6 +30,7 @@ func (s *NoteServ) CreateNote(ctx context.Context, note *domain.Note) error {
 
 func (s *NoteServ) GetNoteById(ctx context.Context, id int) (*domain.Note, error) {
 	return s.repo.GetById(ctx, id)
+
 }
 
 func (s *NoteServ) GetAll(ctx context.Context) ([]*domain.Note, error) {

@@ -7,7 +7,6 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
@@ -15,10 +14,10 @@ import (
 )
 
 func main() {
-	err := godotenv.Load() //сука очень важно его в начале подгрузить как оказалось
-	if err != nil {
-		log.Printf("err of load env file>> %v\n", err)
-	}
+	//err := godotenv.Load() // очень важно его в начале подгрузить
+	//if err != nil {
+	//	log.Printf("err of load env file>> %v\n", err)
+	//}
 
 	dbPool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -46,7 +45,6 @@ func main() {
 	r.Get("/notes/{id}", NoteHandler.GetNote)
 	r.Get("/notes/all", NoteHandler.GetAll)
 	r.Delete("/notes/delete/{id}", NoteHandler.Delete)
-
 	port := ":8080"
 	log.Printf("Starting server on port >> %s", port)
 
